@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const nodeMailer = require('nodemailer');
 
 
-const app = express(); 
+const app = express();
 const port = 3000;
 const cors = require('cors');
 app.use(cors());
@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const jwt = require('jsonwebtoken');
 
-mongoose.connect("mongodb+srv://rohanudhwani:rohan@cluster0.w4ufti3.mongodb.net/",{
+mongoose.connect("mongodb+srv://rohanudhwani:rohan@cluster0.w4ufti3.mongodb.net/", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => {
@@ -31,3 +31,99 @@ app.listen(port, () => {
 
 const User = require('./models/user');
 const Post = require('./models/post');
+const { send } = require('process');
+
+
+app.use(cors());
+
+app.post('/register', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+        const newUser = await User.create({
+            name,
+            email,
+            password,
+        });
+
+        newUser.verificationToken = crypto.randomBytes(20).toString('hex');
+
+        await newUser.save();
+
+        sendVerificationEmail(newUser.email, newUser.verificationToken);
+        res.status(200).json({ message: "User created successfully. Please check your emmail for verification" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+const sendVerificationEmail = async (email, verificationToken) => {
+    const transport = nodeMailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: "rohanudhwani2@gmail.com",
+            pass: "lshs spvl detp ftsd"
+        }
+    });
+
+    const mailOptions = {
+        from: "threads.com",
+        to: email,
+        subject: "Email Verification",
+        text: `Please click on the link to verify your email: http://192.168.1.106:3000/verify/${verificationToken}`
+    }
+
+    try {
+        await transport.sendMail(mailOptions);
+    } catch (error) {
+        console.log("error in sending email");
+    }
+}
+
+app.get('/verify/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({ verificationToken: req.params.token });
+        if (user) {
+            user.verified = true;
+            user.verificationToken = "";
+            await user.save();
+            res.status(200).json({ message: "User verified successfully" });
+        } else {
+            res.status(400).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.log("error in verifying user");
+        res.status(500).json({ error: error.message });
+    }
+});
+
+const generateSecretKey = () => {
+    const secretKey = crypto.randomBytes(32).toString('hex');
+    return secretKey;
+}
+
+const secretKey = generateSecretKey();
+
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            return res.status(404).json({ message: "User does not exist" });
+        }
+        if (!existingUser.verified) {
+            return res.status(400).json({ message: "User is not verified" });
+        }
+        if (existingUser.password !== password) {
+            return res.status(404).json({ message: "Invalid credentials" });
+        }
+        const token = jwt.sign({userId: existingUser._id }, secretKey);
+        res.status(200).json({ result: existingUser, token });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});

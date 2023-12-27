@@ -1,8 +1,9 @@
-import { Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
 
 const RegisterScreen = () => {
 
@@ -10,7 +11,23 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
 
-  const natigation = useNavigation()
+  
+
+  const navigation = useNavigation()
+
+  const handleRegister = () => {
+    const user = { name, email, password }
+    axios.post("http://192.168.1.106:3000/register", user).then((res) => {
+      console.log(res.data);
+      Alert.alert("User created successfully", "Please check your email for verification")
+      setEmail("")
+      setPassword("")
+      setName("")
+    }).catch((err) => {
+      Alert.alert("Registration Failed", "An error occurred during registration")
+      console.log(err);
+    })
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems: 'center' }} >
@@ -51,11 +68,11 @@ const RegisterScreen = () => {
 
         <View style={{ marginTop: 45 }} />
 
-        <Pressable style={{ width: 200, backgroundColor: "black", padding: 15, marginTop: 40, marginLeft: "auto", marginRight: "auto", borderRadius: 6 }}>
+        <Pressable onPress={handleRegister} style={{ width: 200, backgroundColor: "black", padding: 15, marginTop: 40, marginLeft: "auto", marginRight: "auto", borderRadius: 6 }}>
           <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 16, color: "white" }}>Register</Text>
         </Pressable>
 
-        <Pressable onPress={() => natigation.goBack()} style={{ marginTop: 20 }}>
+        <Pressable onPress={() => navigation.goBack()} style={{ marginTop: 20 }}>
           <Text style={{ textAlign: "center", fontSize: 16 }}>Already have an account? Sign In</Text>
         </Pressable>
 

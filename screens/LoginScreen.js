@@ -1,15 +1,33 @@
-import { Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { cloneElement, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {MaterialIcons, AntDesign} from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const LoginScreen = () => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const natigation = useNavigation()
+  const navigation = useNavigation()
+
+  const handleLogin = () => {
+    const user = { email, password }
+    axios.post("http://192.168.1.106:3000/login", user).then((res) => {
+      console.log(res.data);
+      const token = res.data.token
+      AsyncStorage.setItem("authToken", token)
+      Alert.alert("User logged in successfully")
+      setEmail("")
+      setPassword("")
+      navigation.navigate("Home")
+    }).catch((err) => {
+      Alert.alert("Login Failed", "An error occurred during login")
+      console.log(err);
+    })
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems: 'center' }} >
@@ -43,11 +61,11 @@ const LoginScreen = () => {
 
         <View style={{marginTop:45}}/>
 
-        <Pressable style={{width:200, backgroundColor:"black", padding:15, marginTop:40, marginLeft:"auto", marginRight:"auto", borderRadius:6}}>
+        <Pressable onPress={handleLogin} style={{width:200, backgroundColor:"black", padding:15, marginTop:40, marginLeft:"auto", marginRight:"auto", borderRadius:6}}>
           <Text style={{textAlign:"center", fontWeight:"bold", fontSize:16, color:"white"}}>Login</Text>
         </Pressable>
 
-        <Pressable onPress={() => natigation.navigate("Register")} style={{marginTop:20}}>
+        <Pressable onPress={() => navigation.navigate("Register")} style={{marginTop:20}}>
           <Text style={{textAlign:"center", fontSize:16}}>Don't have an account? Sign Up</Text>
         </Pressable>
         
