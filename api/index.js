@@ -26,3 +26,8 @@ mongoose.connect("mongodb+srv://rohanudhwani:rohan@cluster0.w4ufti3.mongodb.net/
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
+
+
+
+const User = require('./models/user');
+const Post = require('./models/post');
