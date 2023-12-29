@@ -65,6 +65,24 @@ const HomeScreen = () => {
     }
   }
 
+  const handleDislike = async (postId) => {
+    try {
+      const response = await axios.put(
+        `http://192.168.1.106:3000/posts/${postId}/${userId}/unlike`
+      );
+      const updatedPost = response.data;
+      // Update the posts array with the updated post
+      const updatedPosts = posts.map((post) =>
+        post._id === updatedPost._id ? updatedPost : post
+      );
+      console.log("updated ", updatedPosts)
+
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Error unliking post:", error);
+    }
+  };
+
   return (
     <ScrollView style={{ marginTop: 25, flex: 1, backgroundColor: "white" }}>
       <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -78,7 +96,7 @@ const HomeScreen = () => {
 
       <View style={{ marginTop: 20 }}>
         {posts?.map((post) => (
-          <View style={{ padding: 15, backgroundColor: "#D0D0D0", borderTopWidth: 1, flexDirection: "row", gap: 10, marginVertical: 10 }}>
+          <View style={{ padding: 15, backgroundColor: "#e5e5e5", borderTopWidth: 1, flexDirection: "row", gap: 10, marginVertical: 10 }}>
             <View>
               <Image style={{ width: 40, height: 40, borderRadius: 20, resizeMode: "contain", }} source={{ uri: "https://cdn-icons-png.flaticon.com/128/149/149071.png" }} />
             </View>
@@ -87,18 +105,18 @@ const HomeScreen = () => {
               <Text style={{ fontSize: 15, fontWeight: "bold", marginBottom: 4 }}>{post?.user?.name}</Text>
               <Text>{post?.content}</Text>
 
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 15 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 15, marginTop: 15 }}>
 
-              {post?.likes?.includes(userId) ? (
-                <AntDesign onPress={() => handleLike(post?._id)} name="heart" size={20} color="red" />
-              ) : (
-                <AntDesign onPress={() => handleLike(post?._id)} name="hearto" size={20} color="black" />
-              )}
-                
+                {post?.likes?.includes(userId) ? (
+                  <AntDesign onPress={() => handleDislike(post?._id)} name="heart" size={22} color="red" />
+                ) : (
+                  <AntDesign onPress={() => handleLike(post?._id)} name="hearto" size={22} color="black" />
+                )}
 
-                <FontAwesome name="comment-o" size={20} color="black" />
 
-                <Ionicons name="share-social-outline" size={20} color="black" />
+                <FontAwesome name="comment-o" size={22} color="black" />
+
+                <Ionicons name="share-social-outline" size={22} color="black" />
               </View>
 
               <Text style={{ marginTop: 7, color: "gray" }}>{post?.likes.length} likes • {post?.replies.length} reply</Text>
