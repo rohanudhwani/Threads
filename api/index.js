@@ -145,3 +145,30 @@ app.get("/user/:userId", async (req, res) => {
         res.status(500).json({ message: "error getting the users" });
     }
 });
+
+
+app.post("/follow", async (req, res) => {
+    const {currentUserId, selectedUserId} = req.body;
+
+    try{
+        await User.findByIdAndUpdate(selectedUserId, {
+            $push: {followers: currentUserId}
+        });
+        res.status(200).json({ message: "user followed successfully" });
+    } catch(error){
+        res.status(500).json({ message: "error following the user" });
+    }
+})
+
+
+app.post("/users/unfollow", async (req, res) => {
+    const {loggedInUserId, targetUserId} = req.body;
+    try{
+        await User.findByIdAndUpdate(targetUserId, {
+            $pull: {followers: loggedInUserId}
+        })
+        res.status(200).json({ message: "user unfollowed successfully" });
+    } catch(error){
+        res.status(500).json({ message: "error unfollowing the user" });
+    }
+})

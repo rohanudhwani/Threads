@@ -38,7 +38,7 @@ const ActivityScreen = () => {
 
         fetchUsers();
     }, []);
-    console.log("users", users);
+
 
     return (
         <ScrollView style={{ marginTop: 50 }}>

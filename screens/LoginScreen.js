@@ -27,6 +27,7 @@ const LoginScreen = () => {
 
     checkLoginStatus()
   }, [])
+  
   const handleLogin = () => {
     const user = { email, password }
     axios.post("http://192.168.1.106:3000/login", user).then((res) => {
