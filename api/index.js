@@ -32,6 +32,7 @@ app.listen(port, () => {
 const User = require('./models/user');
 const Post = require('./models/post');
 const { send } = require('process');
+const Post = require('./models/post');
 
 
 app.use(cors());
@@ -148,27 +149,64 @@ app.get("/user/:userId", async (req, res) => {
 
 
 app.post("/follow", async (req, res) => {
-    const {currentUserId, selectedUserId} = req.body;
+    const { currentUserId, selectedUserId } = req.body;
 
-    try{
+    try {
         await User.findByIdAndUpdate(selectedUserId, {
-            $push: {followers: currentUserId}
+            $push: { followers: currentUserId }
         });
         res.status(200).json({ message: "user followed successfully" });
-    } catch(error){
+    } catch (error) {
         res.status(500).json({ message: "error following the user" });
     }
 })
 
 
 app.post("/users/unfollow", async (req, res) => {
-    const {loggedInUserId, targetUserId} = req.body;
-    try{
+    const { loggedInUserId, targetUserId } = req.body;
+    try {
         await User.findByIdAndUpdate(targetUserId, {
-            $pull: {followers: loggedInUserId}
+            $pull: { followers: loggedInUserId }
         })
         res.status(200).json({ message: "user unfollowed successfully" });
-    } catch(error){
+    } catch (error) {
         res.status(500).json({ message: "error unfollowing the user" });
+    }
+})
+
+
+app.post("/create-post", async (req, res) => {
+    try {
+        const { content, userId } = req.body;
+
+        const newPostData = {
+            user: userId
+        }
+
+        if (content) {
+            newPostData.content = content;
+        }
+
+        const newPost = new Post(newPostData);
+
+        await newPost.save();
+
+        res.status(200).json({ message: "post created successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: "error creating the post" });
+    }
+})
+
+
+
+app.post("/post/:postId/:userId/like", async (req, res) => {
+    try{
+        const postId = req.params.postId;
+        const userId = req.params.userId;
+
+        const post  = await 
+    } catch(error) {
+        res.status(500).json({message: "error liking the post"});
     }
 })
