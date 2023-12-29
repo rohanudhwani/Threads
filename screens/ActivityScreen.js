@@ -97,7 +97,7 @@ const ActivityScreen = () => {
 
                 <View>
                     {selectedButton === "people" && (
-                        <View style={{marginTop:20}}>
+                        <View style={{marginTop:20, gap:15}}>
                             {users?.map((item, index) => (
                                 <User key={index} item={item} />
                             ))}
