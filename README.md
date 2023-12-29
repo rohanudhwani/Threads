@@ -1,7 +1,7 @@
 # Threads
 
-<p align="center">
-  <img src="./assets/icon.png" alt="Threads App Icon" width="100">
+<p>
+  <img src="./assets/icon.png" alt="Threads App Icon" width="100" style="background-color:white">
 </p>
 
 ## Installation
