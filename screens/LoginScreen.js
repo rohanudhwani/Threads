@@ -37,7 +37,7 @@ const LoginScreen = () => {
       Alert.alert("User logged in successfully")
       setEmail("")
       setPassword("")
-      navigation.navigate("Home")
+      navigation.navigate("Main")
     }).catch((err) => {
       Alert.alert("Login Failed", "An error occurred during login")
       console.log(err);
