@@ -1,10 +1,29 @@
 import { StyleSheet, Text, View, Image, TextInputBase, TextInput, Button } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { UserType } from '../UserContext'
+import axios from 'axios'
 
 const ThreadsScreen = () => {
 
     const [content, setContent] = useState("")
+    const {userId, setUserId} = useContext(UserType);
+
+    const handlePostSubmit = () => {
+        const postData = {
+            userId, 
+        }
+
+        if(content) {
+            postData.content = content;
+        }
+
+        axios.post(`http://192.168.1.106:3000/create-post`, postData).then((response) => {
+            setContent("")
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
 
   return (
     <SafeAreaView style={{padding:10}}>
@@ -30,7 +49,7 @@ const ThreadsScreen = () => {
 
       <View style={{marginTop:20}} />
 
-      <Button title="Share Post"/>
+      <Button onPress={handlePostSubmit} title="Share Post"/>
     </SafeAreaView>
   )
 }

@@ -30,7 +30,6 @@ app.listen(port, () => {
 
 
 const User = require('./models/user');
-const Post = require('./models/post');
 const { send } = require('process');
 const Post = require('./models/post');
 
@@ -195,18 +194,62 @@ app.post("/create-post", async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "error creating the post" });
+        console.log(error);
     }
 })
 
 
 
-app.post("/post/:postId/:userId/like", async (req, res) => {
-    try{
+app.post("/posts/:postId/:userId/like", async (req, res) => {
+    try {
         const postId = req.params.postId;
         const userId = req.params.userId;
 
-        const post  = await 
-    } catch(error) {
-        res.status(500).json({message: "error liking the post"});
+        const post = await Post.findById(postId).populate("user", "name")
+
+        const updatedPost = await Post.findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true })
+
+        if (!updatedPost) {
+            return res.status(404).json({ message: "Post not found" })
+        }
+
+        updatedPost.user = post.user;
+
+        res.status(200).json(updatedPost);
+    } catch (error) {
+        res.status(500).json({ message: "error liking the post" });
     }
 })
+
+
+app.put("/posts/:postId/:userId/unlike", async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.params.userId;
+
+    try {
+        const post = await Post.findById(postId).populate("user", "name");
+
+        const updatedPost = await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
+
+        updatedPost.user = post.user;
+
+        if (!updatedPost) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        res.json(updatedPost);
+    } catch (error) {
+        console.error("Error unliking post:", error);
+        res.status(500).json({ message: "An error occurred while unliking the post" });
+    }
+});
+
+app.get("/get-posts", async (req, res) => {
+    try {
+        const posts = await Post.find().populate("user", "name").sort({ createdAt: -1 });
+
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred while getting the posts" });
+    }
+});
