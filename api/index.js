@@ -121,9 +121,27 @@ app.post('/login', async (req, res) => {
         if (existingUser.password !== password) {
             return res.status(404).json({ message: "Invalid credentials" });
         }
-        const token = jwt.sign({userId: existingUser._id }, secretKey);
+        const token = jwt.sign({ userId: existingUser._id }, secretKey);
         res.status(200).json({ result: existingUser, token });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+app.get("/user/:userId", async (req, res) => {
+    try {
+        const loggedInUserId = req.params.userId;
+        User.find({ _id: { $ne: loggedInUserId } })
+            .then((users) => {
+                res.status(200).json(users);
+            })
+            .catch((error) => {
+                console.log("Error: ", error);
+                res.status(500).json("errror");
+            });
+    } catch (error) {
+        res.status(500).json({ message: "error getting the users" });
     }
 });

@@ -1,5 +1,5 @@
 import { Alert, Image, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { cloneElement, useState } from 'react'
+import React, { cloneElement, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {MaterialIcons, AntDesign} from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -13,6 +13,20 @@ const LoginScreen = () => {
 
   const navigation = useNavigation()
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try{
+        const token = await AsyncStorage.getItem("authToken")
+        if(token){
+          navigation.replace("Main")
+        }
+      } catch(error){
+        console.log(error);
+      }
+    }
+
+    checkLoginStatus()
+  }, [])
   const handleLogin = () => {
     const user = { email, password }
     axios.post("http://192.168.1.106:3000/login", user).then((res) => {
