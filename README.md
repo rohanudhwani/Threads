@@ -4,6 +4,15 @@
   <img src="./assets/icon.png" alt="Threads App Icon" width="100" style="background-color:white">
 </p>
 
+## Features
+
+- Secure sign-up using email with email verification.
+- Login with improved security using Json Web Tokens (JWT).
+- Profile screen for user information and settings.
+- Activity screen to discover and follow/unfollow other users.
+- Create thread screen to post new content.
+- Feed screen displaying threads by the user and others.
+
 ## Installation
 
 To run the Threads app on your device, follow these steps:
@@ -33,14 +42,6 @@ To run the Threads app on your device, follow these steps:
 6. Run the Threads app on your device:
    - Download and install the app from [Threads.apk](https://github.com/rohanudhwani/Threads/raw/master/Threads.apk).
 
-## Features
-
-- Secure sign-up using email with email verification.
-- Login with improved security using Json Web Tokens (JWT).
-- Profile screen for user information and settings.
-- Activity screen to discover and follow/unfollow other users.
-- Create thread screen to post new content.
-- Feed screen displaying threads by the user and others.
 
 ## Screenshots
 
