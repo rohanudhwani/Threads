@@ -1,7 +1,7 @@
 # Threads
 
 <p>
-  <img src="./assets/icon.png" alt="Threads App Icon" width="100" style="background-color:white">
+  <img src="./assets/icon1.png" alt="Threads App Icon" width="100" style="background-color:white">
 </p>
 
 ## Features
