@@ -4,8 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
+import { connect } from 'react-redux';
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ipAddress}) => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -17,7 +18,7 @@ const RegisterScreen = () => {
 
   const handleRegister = () => {
     const user = { name, email, password }
-    axios.post("http://192.168.1.106:3000/register", user).then((res) => {
+    axios.post(`${ipAddress}/register`, user).then((res) => {
       console.log(res.data);
       Alert.alert("User created successfully", "Please check your email for verification")
       setEmail("")
@@ -81,6 +82,10 @@ const RegisterScreen = () => {
   )
 }
 
-export default RegisterScreen
+const mapStateToProps = state => ({
+  ipAddress: state.ipAddress,
+});
+
+export default connect(mapStateToProps) (RegisterScreen)
 
 const styles = StyleSheet.create({})

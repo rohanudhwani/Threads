@@ -4,8 +4,9 @@ import { UserType } from '../UserContext';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { connect } from 'react-redux';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ipAddress}) => {
 
   const [user, setUser] = useState("")
   const { userId, setUserId } = useContext(UserType);
@@ -14,7 +15,7 @@ const ProfileScreen = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.106:3000/profile/${userId}`)
+        const response = await axios.get(`${ipAddress}/profile/${userId}`)
         const { user } = response.data
         setUser(user)
       } catch (err) {
@@ -122,6 +123,10 @@ const ProfileScreen = () => {
   )
 }
 
-export default ProfileScreen
+const mapStateToProps = state => ({
+  ipAddress: state.ipAddress,
+});
+
+export default connect(mapStateToProps) (ProfileScreen)
 
 const styles = StyleSheet.create({})

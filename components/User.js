@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { UserType } from '../UserContext';
 
-const User = ({item}) => {
+const User = ({item, ipAddress}) => {
   const {userId, setUserId} = useContext(UserType);
 
 
@@ -10,7 +10,7 @@ const User = ({item}) => {
 
   const sendFollow = async (currentUserId, selectedUserId) => {
     try{
-      const response = await fetch("http:192.168.1.106:3000/follow", {
+      const response = await fetch(`${ipAddress}/follow`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +28,7 @@ const User = ({item}) => {
 
   const handleUnfollow = async (targetId) => {
     try{
-      const response = await fetch("http://192.168.1.106:3000/users/unfollow", {
+      const response = await fetch(`${ipAddress}/users/unfollow`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

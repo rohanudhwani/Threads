@@ -4,7 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { UserType } from '../UserContext'
 import axios from 'axios'
 
-const ThreadsScreen = () => {
+import { connect } from 'react-redux';
+
+
+const ThreadsScreen = ({ipAddress}) => {
 
     const [content, setContent] = useState("")
     const {userId, setUserId} = useContext(UserType);
@@ -18,7 +21,7 @@ const ThreadsScreen = () => {
             postData.content = content;
         }
 
-        axios.post(`http://192.168.1.106:3000/create-post`, postData).then((response) => {
+        axios.post(`${ipAddress}/create-post`, postData).then((response) => {
             setContent("")
         }).catch((err) => {
             console.log(err)
@@ -54,6 +57,10 @@ const ThreadsScreen = () => {
   )
 }
 
-export default ThreadsScreen
+const mapStateToProps = state => ({
+  ipAddress: state.ipAddress,
+});
+
+export default connect(mapStateToProps) (ThreadsScreen)
 
 const styles = StyleSheet.create({})

@@ -13,7 +13,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons"
 import { useFocusEffect } from '@react-navigation/native';
 
-const HomeScreen = () => {
+import { connect } from 'react-redux';
+
+const HomeScreen = ({ipAddress}) => {
 
   const { userId, setUserId } = useContext(UserType);
 
@@ -37,7 +39,7 @@ const HomeScreen = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get("http://192.168.1.106:3000/get-posts")
+      const response = await axios.get(`${ipAddress}/get-posts`)
 
       setPosts(response.data)
 
@@ -54,7 +56,7 @@ const HomeScreen = () => {
 
   const handleLike = async (postId) => {
     try {
-      const response = await axios.post(`http://192.168.1.106:3000/posts/${postId}/${userId}/like`, { postId, userId })
+      const response = await axios.post(`${ipAddress}/posts/${postId}/${userId}/like`, { postId, userId })
 
       const updatedPost = response.data
       const updatedPosts = posts.map((post) => post?._id === updatedPost?._id ? updatedPost : post)
@@ -68,7 +70,7 @@ const HomeScreen = () => {
   const handleDislike = async (postId) => {
     try {
       const response = await axios.put(
-        `http://192.168.1.106:3000/posts/${postId}/${userId}/unlike`
+        `${ipAddress}/posts/${postId}/${userId}/unlike`
       );
       const updatedPost = response.data;
       // Update the posts array with the updated post
@@ -128,6 +130,10 @@ const HomeScreen = () => {
   )
 }
 
-export default HomeScreen
+const mapStateToProps = state => ({
+  ipAddress: state.ipAddress,
+});
+
+export default connect(mapStateToProps)(HomeScreen)
 
 const styles = StyleSheet.create({})

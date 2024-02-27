@@ -4,11 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios'
 import { UserType } from '../UserContext'
+import { connect } from 'react-redux';
 
 import "core-js/stable/atob";
 import User from '../components/User';
 
-const ActivityScreen = () => {
+const ActivityScreen = ({ipAddress}) => {
 
     const [selectedButton, setSelectedButton] = useState("people")
     const [content, setContent] = useState("People Content")
@@ -27,7 +28,7 @@ const ActivityScreen = () => {
             setUserId(userId);
 
             axios
-                .get(`http://192.168.1.106:3000/user/${userId}`)
+                .get(`${ipAddress}/user/${userId}`)
                 .then((response) => {
                     setUsers(response.data);
                 })
@@ -99,7 +100,7 @@ const ActivityScreen = () => {
                     {selectedButton === "people" && (
                         <View style={{marginTop:20, gap:15}}>
                             {users?.map((item, index) => (
-                                <User key={index} item={item} />
+                                <User key={index} item={item} ipAddress={ipAddress}/>
                             ))}
                         </View>
                     )}
@@ -109,6 +110,10 @@ const ActivityScreen = () => {
     )
 }
 
-export default ActivityScreen
+const mapStateToProps = state => ({
+    ipAddress: state.ipAddress,
+  });
+  
+  export default connect(mapStateToProps) (ActivityScreen)
 
 const styles = StyleSheet.create({})

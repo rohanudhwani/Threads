@@ -5,8 +5,9 @@ import {MaterialIcons, AntDesign} from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { connect } from 'react-redux';
 
-const LoginScreen = () => {
+const LoginScreen = ({ipAddress}) => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -30,7 +31,7 @@ const LoginScreen = () => {
   
   const handleLogin = () => {
     const user = { email, password }
-    axios.post("http://192.168.1.106:3000/login", user).then((res) => {
+    axios.post(`${ipAddress}/login`, user).then((res) => {
       console.log(res.data);
       const token = res.data.token
       AsyncStorage.setItem("authToken", token)
@@ -89,6 +90,10 @@ const LoginScreen = () => {
   )
 }
 
-export default LoginScreen
+const mapStateToProps = state => ({
+  ipAddress: state.ipAddress,
+});
+
+export default connect(mapStateToProps) (LoginScreen)
 
 const styles = StyleSheet.create({})
